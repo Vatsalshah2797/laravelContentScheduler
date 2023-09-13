@@ -9,7 +9,7 @@
 
 ## About Laravel
 
-Laravel 9 Content Scheduler Web Application
+Laravel 9 Content Scheduler And User Wallet Management Web Application
 
 Steps to be followed
 ===============================
