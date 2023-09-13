@@ -9,6 +9,46 @@
 
 ## About Laravel
 
+Laravel 9 Content Scheduler Web Application
+
+Steps to be followed
+===============================
+- Clone project code zip file from Repository
+- Run command `Composer install`
+- Run command `npm install`
+- Run command `cp env.example .env`
+- Run command `php artisan key:generate`
+- Create mysql db and Set database credentials in .env file
+- Add razorpay account credentials in .env file
+- Run command `php artisan migrate --seed`
+- Run command `php artisan serve`
+- Run command `npm run dev`
+
+Credentials for Admin User
+============================
+email = admin@admin.com,
+password = admin
+
+
+Used Tech Stack:: php, laravel 9 
+
+Note::
+============
+My laravel Content Scheduler is user customer send nessage through email creation web application.... 
+
+
+php artisan serve
+
+=============================
+
+Laravel Settings
+======================
+
+- Create one db in mysql and Set db connection in .env file
+- run migration using php artisan migrate command with seeding
+- run php artisan serve
+
+
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
@@ -20,8 +60,8 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 - [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
+fjf
+## Learning LaraveBl
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
