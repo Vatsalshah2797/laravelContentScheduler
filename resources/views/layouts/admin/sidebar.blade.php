@@ -32,6 +32,7 @@
         </li>
         <li><a href="{{ route('customers.index') }}"><i class="fa fa-clock-o orange_color"></i> <span>Customers</span></a></li>
         <li><a href="{{ route('contents.index') }}"><i class="fa fa-clock-o orange_color"></i> <span>Contents</span></a></li>
+        <li><a href="{{ route('transactions.index') }}"><i class="fa fa-clock-o orange_color"></i> <span>Wallet Transaction</span></a></li>
         <li>
             <a href="#element" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-diamond purple_color"></i> <span>Elements</span></a>
             <ul class="collapse list-unstyled" id="element">

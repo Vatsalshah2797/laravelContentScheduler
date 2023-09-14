@@ -9,6 +9,7 @@ use Redirect;
 use App\Models\Payment;
 use App\Models\Wallet;
 use App\Http\Helpers\CommonTrait;
+use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\Auth;
 
 class RazorpayController extends Controller
@@ -54,9 +55,9 @@ class RazorpayController extends Controller
         if(count($input) && !empty($input['razorpay_payment_id'])) {
             try {
                 $response = $api->payment->fetch($input['razorpay_payment_id'])->capture(array('amount' => $payment['amount']));
-                print_r($response);
-                //exit;
-                if (!empty($response) && $response['status'] == 'captured') {
+                
+                $wallet = $this->getUserBalance($user->id);
+                if (!empty($response) && $response['status'] == 'captured') {//Success
                     $bankTranstionId = isset($payment['acquirer_data']['bank_transaction_id']) ? $payment['acquirer_data']['bank_transaction_id'] : '';
                     //Save payment transaction details
                     $payment = Payment::create([
@@ -95,59 +96,59 @@ class RazorpayController extends Controller
                         [   'balance' => $userBalance
                         ],
                     );
+
+                    //Save wallet transaction details
+                    $wallet = WalletTransaction::create([
+                        'wallet_id' => $wallet->id,
+                        'status' => 'Credited',
+                        'payment_status' => 'Success',
+                        'type' => 'Add To Wallet',
+                        'customer_id' => null,
+                        'amount' => $response['amount']/100,
+                    ]);
+
                     return redirect()->back()->with('success', 'Payment Succefully Done!');
-                } else {
+                } else {//Failed Transaction
+                    $bankTranstionId = isset($payment['acquirer_data']['bank_transaction_id']) ? $payment['acquirer_data']['bank_transaction_id'] : '';
+                    //Save payment transaction details
+                    $payment = Payment::create([
+                        'transaction_id' => $response['id'],
+                        'method' => $response['method'],
+                        'currency' => $response['currency'],
+                        'status' => $response['status'],
+                        'entity' => $response['entity'],
+                        'order_id' => $response['order_id'],
+                        'invoice_id' => $response['invoice_id'],
+                        'bank' => $response['bank'],
+                        'wallet' => $response['wallet'],
+                        'bank_transaction_id' => $bankTranstionId,
+                        //'user_email' => $response['email'],
+                        'amount' => $response['amount']/100,
+                        //'json_response' => json_encode((array)$response)
+                    ]);
+
+                    //Save wallet transaction details
+                    $wallet = WalletTransaction::create([
+                        'wallet_id' => $wallet->id,
+                        'status' => 'Credited',
+                        'payment_status' => 'Fail',
+                        'type' => 'Add To Wallet',
+                        'customer_id' => null,
+                        'amount' => $response['amount']/100,
+                    ]);
+                    
                     return redirect()->back()->with('error', 'Something went wrong, Please try again later!');
                 }
             } catch(\Exception $e) {
                 
                 //return $e->getMessage();
-                Session::put('error',$e->getMessage());
+                \Session::put('error',$e->getMessage());
                 //return redirect()->back();
                 return back()->withInput()->with('error', __('Something went wrong, Please try again later!'));
             }
 
-            // $payment = $api->payment->fetch($request->input('razorpay_payment_id'));
-            // if (!empty($payment) && $payment['status'] == 'captured') {
-            //     $paymentId = $payment['id'];
-            //     $amount = $payment['amount'];
-            //     $currency = $payment['currency'];
-            //     $status = $payment['status'];
-            //     $entity = $payment['entity'];
-            //     $orderId = $payment['order_id'];
-            //     $invoiceId = $payment['invoice_id'];
-            //     $method = $payment['method'];
-            //     $bank = $payment['bank'];
-            //     $wallet = $payment['wallet'];
-            //     $bankTranstionId = isset($payment['acquirer_data']['bank_transaction_id']) ? $payment['acquirer_data']['bank_transaction_id'] : '';
-            // } else {
-            //     return redirect()->back()->with('error', 'Something went wrong, Please try again later!');
-            // }
-            // try {
-            //     // Payment detail save in database
-            //     $payment = new Payment;
-            //     $payment->transaction_id = $paymentId;
-            //     $payment->amount = $amount / 100;
-            //     $payment->currency = $currency;
-            //     $payment->entity = $entity;
-            //     $payment->status = $status;
-            //     $payment->order_id = $orderId;
-            //     $payment->method = $method;
-            //     $payment->bank = $bank;
-            //     $payment->wallet = $wallet;
-            //     $payment->bank_transaction_id = $bankTranstionId;
-            //     $saved = $payment->save();
-            // } catch (Exception $e) {
-            //     $saved = false;
-            // }
-            // if ($saved) {
-            //     return redirect()->back()->with('success', __('Payment Detail store successfully!'));
-            // } else {
-            //     return back()->withInput()->with('error', __('Something went wrong, Please try again later!'));
-            // }
-
         }
-        Session::put('success','Payment Successful');
+        \Session::put('success','Payment Successful');
         return redirect()->back();
     }
 }

@@ -15,4 +15,10 @@ class Wallet extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function walletTransaction()
+    {
+        return $this->hasMany(WalletTransaction::class, 'wallet_id');
+    }
+
 }
