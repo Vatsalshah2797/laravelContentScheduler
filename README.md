@@ -34,6 +34,11 @@ Note::
 ============
 My laravel Content Scheduler is user based wallet management and send nessage through email creation to users cutomer web application.... 
 
+Developed web application demo video url:
+https://watch.screencastify.com/v/BYVWKo2AZ9uOp8CZflI6
+
+Kindly check demo once you will sure like it!
+
 
 php artisan serve
 
