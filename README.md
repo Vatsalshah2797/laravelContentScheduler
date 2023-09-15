@@ -21,19 +21,18 @@ Steps to be followed
 - Run command `php artisan key:generate`
 - Create mysql db and Set database credentials in .env file
 - Add razorpay account credentials in .env file
+- Add smtp gmail account details in .env file
 - Run command `php artisan migrate --seed`
 - Run command `php artisan serve`
 - Run command `npm run dev`
 - Run Command for queue job worker start `php artisan queue:work --queue=emails`
 
 
-
-
 Used Tech Stack:: php, laravel 9 
 
 Note::
 ============
-My laravel Content Scheduler is user customer send nessage through email creation web application.... 
+My laravel Content Scheduler is user based wallet management and send nessage through email creation to users cutomer web application.... 
 
 
 php artisan serve
