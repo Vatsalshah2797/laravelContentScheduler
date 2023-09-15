@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 
 use App\Http\Helpers\CommonTrait;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Customer;
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
+use App\Models\Content;
 
 class HomeController extends Controller
 {
@@ -51,8 +55,25 @@ class HomeController extends Controller
             $walletBalance = $this->getUserWalletBalance($user->id);
             //$walletBalance = (int)$walletBalance;
         }
+
+        //Customers
+        $customer_count = Customer::where('user_id', $user->id)->get()->count();
+        //dd($customers);
+
+        //Contents
+        $content_count = Content::get()->count();
+        
+
+        //Wallet Transactions
+        $transactions = Wallet::select('user_id', 'id')->with(['walletTransaction' => function ($query) {
+            $query->select('id', 'amount', 'status', 'payment_status', 'type', 'wallet_id');
+        }])->where('user_id', $user->id)->latest()->first();
+
+        $transaction_count = $transactions->walletTransaction->count();
+        //Wallet Volume
+
         //echo $walletBalance;exit;
-        return view('dashboard', compact('walletBalance', 'user'));
+        return view('dashboard', compact('walletBalance', 'user', 'customer_count', 'content_count', 'transaction_count'));
     }
 
      /**

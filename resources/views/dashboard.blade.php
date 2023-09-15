@@ -23,8 +23,8 @@
                   </div>
                   <div class="counter_no">
                      <div>
-                        <p class="total_no">2500</p>
-                        <p class="head_couter">Welcome</p>
+                        <p class="total_no">{{$walletBalance ?? 0}}</p>
+                        <p class="head_couter">Wallet Balance</p>
                      </div>
                   </div>
                </div>
@@ -38,8 +38,8 @@
                   </div>
                   <div class="counter_no">
                      <div>
-                        <p class="total_no">123.50</p>
-                        <p class="head_couter">Average Time</p>
+                        <p class="total_no">{{$content_count ?? 0}}</p>
+                        <p class="head_couter">Contents</p>
                      </div>
                   </div>
                </div>
@@ -53,8 +53,8 @@
                   </div>
                   <div class="counter_no">
                      <div>
-                        <p class="total_no">1,805</p>
-                        <p class="head_couter">Collections</p>
+                        <p class="total_no">{{$customer_count ?? 0}}</p>
+                        <p class="head_couter">Customers</p>
                      </div>
                   </div>
                </div>
@@ -68,8 +68,8 @@
                   </div>
                   <div class="counter_no">
                      <div>
-                        <p class="total_no">54</p>
-                        <p class="head_couter">Comments</p>
+                        <p class="total_no">{{$transaction_count ?? 0}}</p>
+                        <p class="head_couter">Wallet Transactions</p>
                      </div>
                   </div>
                </div>

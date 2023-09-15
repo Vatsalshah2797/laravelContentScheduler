@@ -9,7 +9,8 @@
 
 ## About Laravel
 
-Laravel 9 Content Scheduler And User Wallet Management Web Application
+Laravel 9 Content Scheduler Application
+And User Wallet Management Web application using Razorpay payment gateway integration
 
 Steps to be followed
 ===============================
@@ -25,10 +26,7 @@ Steps to be followed
 - Run command `npm run dev`
 - Run Command for queue job worker start `php artisan queue:work --queue=emails`
 
-Credentials for Admin User
-============================
-email = admin@admin.com,
-password = admin
+
 
 
 Used Tech Stack:: php, laravel 9 

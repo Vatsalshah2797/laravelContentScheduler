@@ -33,7 +33,7 @@
         <li><a href="{{ route('customers.index') }}"><i class="fa fa-clock-o orange_color"></i> <span>Customers</span></a></li>
         <li><a href="{{ route('contents.index') }}"><i class="fa fa-clock-o orange_color"></i> <span>Contents</span></a></li>
         <li><a href="{{ route('transactions.index') }}"><i class="fa fa-clock-o orange_color"></i> <span>Wallet Transaction</span></a></li>
-        <li>
+        {{-- <li>
             <a href="#element" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-diamond purple_color"></i> <span>Elements</span></a>
             <ul class="collapse list-unstyled" id="element">
                 <li><a href="general_elements.html">> <span>General Elements</span></a></li>
@@ -75,7 +75,7 @@
         </li>
         <li><a href="map.html"><i class="fa fa-map purple_color2"></i> <span>Map</span></a></li>
         <li><a href="charts.html"><i class="fa fa-bar-chart-o green_color"></i> <span>Charts</span></a></li>
-        <li><a href="settings.html"><i class="fa fa-cog yellow_color"></i> <span>Settings</span></a></li>
+        <li><a href="settings.html"><i class="fa fa-cog yellow_color"></i> <span>Settings</span></a></li> --}}
     </ul>
     </div>
 </nav>
