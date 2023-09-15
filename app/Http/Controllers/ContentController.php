@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Content;
+
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Mail;
-//use App\Mail\ContentEmail;
-use App\Http\Helpers\CommonTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Content;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
+use App\Mail\ContentEmail;
+use App\Http\Helpers\CommonTrait;
+use App\Jobs\SendContentEmail;
+use Illuminate\Support\Facades\Queue;
+
 
 class ContentController extends Controller
 {
@@ -86,7 +93,20 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
-        return view('contents.show', compact('content'));
+        $customers = [];
+        $user = Auth::user();
+
+        $walletBalance = 0;
+        if (!empty($user) && isset($user->id)) {
+            $walletBalance = $this->getUserWalletBalance($user->id);
+        }
+
+        $customers = Customer::select('id','name')->where('user_id', $user->id)->latest()->get();
+        if (!empty($customers)) {
+            $customers = $customers->toArray();
+            //s$customers = $customers[0] ?? [];
+        }
+        return view('contents.show', compact('content', 'user', 'customers', 'walletBalance'));
     }
 
     /**
@@ -148,19 +168,86 @@ class ContentController extends Controller
 
     public function sendEmail(Request $request)
     {
-        $content = Content::find($request->input('content_id'));
+        $user = Auth::user();
+        //dd($request->all());
+        //dd($id);
+        //$content = Content::find($request->input('content_id'));
+        $request->validate([
+            'user_ids' => 'required|array|min:1',
+            'title' => 'required',
+            'message' => 'required'
+        ]);
         $userIds = $request->input('user_ids');
 
         // Load users based on selected user IDs
-        $users = User::whereIn('id', $userIds)->get();
+        $customers = Customer::whereIn('id', $userIds)->get();
+        $content = Content::find($request->input('content_id'));
+        //print_r($content);
 
-        foreach ($users as $user) {
-            // Send email to each user
-            //Mail::to($user->email)->send(new ContentEmail($content));
+        $amountToDeduct = env('EMAIL_CHARGE', 7);
+        $totalAmmountToBeDeduct = count($userIds) * $amountToDeduct;
+        $currentUserWalletInfo = $this->getUserBalance($user->id);
+        if (empty($currentUserWalletInfo)) {
+            return redirect()->back()->with('error', 'Please add amount into your wallet for send email!');
+        }
+        //echo ($currentBalance);
+        if (!empty($currentUserWalletInfo) && isset($currentUserWalletInfo->id) && $currentUserWalletInfo->id != ''
+            ) {
+                if (isset($currentUserWalletInfo->balance) && $currentUserWalletInfo->balance < $totalAmmountToBeDeduct) {
+                    return redirect()->back()->with('error', 'Low Wallet Balance!');
+                } else {
+                    $userBalance = 0;
+                    //$wallet = $this->getUserBalance($user->id);
+                    foreach ($customers as $customer) {
+
+                        //send mail through job
+                        SendContentEmail::dispatch($user, $content, $amountToDeduct, $customer)
+                        ->onQueue('emails');
+
+                        // Send email to each user without job process
+                        // $sendMail = Mail::to($customer->email)->send(new ContentEmail($content));
+                        // if($sendMail) {
+                        //     $currentUserWalletInfo = $this->getUserBalance($user->id);
+                        //     //echo ($currentBalance);
+                        //     if (!empty($currentUserWalletInfo)) {
+                        //         if (isset($currentUserWalletInfo->id) && $currentUserWalletInfo->id != '') {
+                        //             $userBalance = ($currentUserWalletInfo->balance ?? 0) - $amountToDeduct;
+                        //         }
+                        //     }
+                        //     if ($userBalance > 0 && isset($user->id)) {
+                        //         //$currentBalance += $amountToDeduct;
+                        //         Wallet::updateOrCreate(
+                        //             [
+                        //                 'user_id'   => $user->id,
+                        //             ],
+                        //             [   'balance' => $userBalance
+                        //             ],
+                        //         );
+
+                        //         //Save wallet transaction details
+                        //         $wallet = WalletTransaction::create([
+                        //             'wallet_id' => $currentUserWalletInfo->id,
+                        //             'status' => 'Debited',
+                        //             'payment_status' => 'Success',
+                        //             'type' => 'Send Mail To Customer',
+                        //             'customer_id' => $customer->id,
+                        //             'amount' => $amountToDeduct,
+                        //         ]);
+                        //     } else {
+                        //         return redirect()->back()->with('error', 'Something went wrong!');
+                        //     }
+                        // } else {
+                        //     return redirect()->back()->with('error', 'Something went wrong!');
+                        // }
+                    }
+                    // Redirect back with a success message
+                    return redirect()->route('contents.index')->with('success', 'Content sent successfully to selected customers of user.');
+                }
+        } else {
+            return redirect()->back()->with('error', 'Something went wrong!');
         }
 
-        // Redirect back with a success message
-        return redirect()->back()->with('success', 'Content sent successfully to selected users.');
+        
     }
 
 }

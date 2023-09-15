@@ -76,4 +76,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('customers', \App\Http\Controllers\CustomerController::class);
     Route::resource('contents', \App\Http\Controllers\ContentController::class);
     Route::resource('transactions', \App\Http\Controllers\WalletTransactionController::class);
+    Route::post('sendemail', [\App\Http\Controllers\ContentController::class, 'sendEmail'])->name('contents.sendemail');
 });

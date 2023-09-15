@@ -44,12 +44,12 @@
                                       <tr>
                                          <td>{{ ++$i }}</td>
                                          <td>{{ $content->title }}</td>
-                                         <td>{{ html_entity_decode($content->message) }}</td>
+                                         <td>{{ strip_tags($content->message) }}</td>
                                          <td>
                                             <form action="{{ route('contents.destroy',$content->id) }}" method="POST">
                                  
-                                                {{-- <a class="btn btn-info" href="{{ route('contents.show',$content->id) }}">Show</a> --}}
-                                  
+                                                <a class="btn btn-info" href="{{ route('contents.show',$content->id) }}">Send Email</a>
+
                                                 <a class="btn btn-primary" href="{{ route('contents.edit',$content->id) }}">Edit</a>
                                  
                                                 @csrf

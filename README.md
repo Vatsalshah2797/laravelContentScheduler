@@ -23,6 +23,7 @@ Steps to be followed
 - Run command `php artisan migrate --seed`
 - Run command `php artisan serve`
 - Run command `npm run dev`
+- Run Command for queue job worker start `php artisan queue:work --queue=emails`
 
 Credentials for Admin User
 ============================
